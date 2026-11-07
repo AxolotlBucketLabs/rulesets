@@ -2,6 +2,8 @@
 
 This repository stores the versioned GitHub ruleset configuration used by AxolotlBucketLabs repositories.
 
+[![CI](https://github.com/AxolotlBucketLabs/rulesets/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/AxolotlBucketLabs/rulesets/actions/workflows/validate.yml) [![License](https://img.shields.io/github/license/AxolotlBucketLabs/rulesets)](LICENSE) [![Discord](https://img.shields.io/discord/1568295845374206052?label=Discord&logo=discord&logoColor=white&color=5865F2)](https://discord.gg/Pk4FrNvHnM)
+
 ## Main baseline
 
 The `main-baseline` directory contains one importable JSON export for each repository that uses the `main-baseline` ruleset. The files preserve repository-specific required status checks while keeping the review, branch, and bypass policy consistent.
