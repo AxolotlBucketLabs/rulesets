@@ -1,0 +1,47 @@
+name: Validate rulesets
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate ruleset JSON
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Parse JSON exports
+        shell: python
+        run: |
+          from pathlib import Path
+          import json
+
+          files = sorted(Path("main-baseline").glob("*.json"))
+          if not files:
+              raise SystemExit("No ruleset exports found")
+
+          for path in files:
+              with path.open(encoding="utf-8") as stream:
+                  document = json.load(stream)
+              required = {"name", "target", "enforcement", "conditions", "rules", "bypass_actors"}
+              missing = required.difference(document)
+              if missing:
+                  raise SystemExit(f"{path}: missing {sorted(missing)}")
+              if document["name"] != "main-baseline":
+                  raise SystemExit(f"{path}: unexpected ruleset name")
+              if document["target"] != "branch":
+                  raise SystemExit(f"{path}: unexpected target")
+              if "refs/heads/main" not in document["conditions"]["ref_name"]["include"]:
+                  raise SystemExit(f"{path}: main branch is not targeted")
+
+          print(f"Validated {len(files)} ruleset exports")
